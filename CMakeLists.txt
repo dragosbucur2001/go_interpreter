@@ -25,22 +25,30 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
+file(GLOB_RECURSE LIBRARY_SOURCES "src/*.cpp")
+add_library(interpreter_lib ${LIBRARY_SOURCES})
 
 add_executable(
   interpreter
   main.cpp
 )
 
-add_executable(
-  hello_test
-  hello_test.cc
+target_link_libraries(
+    interpreter
+    interpreter_lib
 )
 
-target_link_libraries(
-  hello_test
-  GTest::gtest_main
-)
+enable_testing()
+
+file(GLOB TEST_SOURCES "tests/*.cpp")
+foreach(test_source ${TEST_SOURCES})
+    get_filename_component(test_name ${test_source} NAME_WE)
+    add_executable(${test_name} ${test_source})
+    target_link_libraries(${test_name} PRIVATE gtest_main)
+    target_link_libraries(${test_name} PRIVATE interpreter_lib)
+    # Optionally, link other libraries that your tests depend on
+    # target_link_libraries(${test_name} PRIVATE <your_libraries_here>)
+endforeach()
 
 include(GoogleTest)
-gtest_discover_tests(hello_test)
+# gtest_discover_tests(hello_test)
