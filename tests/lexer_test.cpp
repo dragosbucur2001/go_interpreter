@@ -35,7 +35,7 @@ TEST(Lexer, complex_tokens)
     std::string s{ "let five = 5;"
                    "let ten = 10;"
                    "let add = fn(x, y) {"
-                   "    x + y;"
+                   "  \t\r\n x + y;"
                    "};"
                    "let result = add(five, ten);" };
 

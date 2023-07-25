@@ -3,9 +3,6 @@
 
 Lexer::Lexer(std::unique_ptr<std::istream>&& _input)
   : input(std::move(_input))
-  , position(0)
-  , readPosition(0)
-  , byte(0)
 {}
 
 static bool
@@ -27,43 +24,74 @@ is_digit(char c)
 }
 
 Token
+Lexer::read_word()
+{
+    std::string s;
+    char c;
+
+    input->read(&c, 1);
+    while (is_letter(c)) {
+        s += c;
+        c = input->get();
+    }
+    input->putback(c);
+
+    if (s == "let")
+        return { TokenType::LET, "let" };
+
+    if (s == "fn")
+        return { TokenType::FUNCTION, "fn" };
+
+    return { TokenType::IDENTIFIER, std::move(s) };
+}
+
+Token
+Lexer::read_number()
+{
+    std::string s;
+    char c;
+
+    input->read(&c, 1);
+    while (is_digit(c)) {
+        s += c;
+        c = input->get();
+    }
+    input->putback(c);
+
+    return { TokenType::INT, std::move(s) };
+}
+
+void
+Lexer::skip_whitespace()
+{
+    char c;
+    do {
+        c = input->get();
+    } while (is_whitespace(c));
+
+    input->putback(c);
+}
+
+Token
 Lexer::next_token()
 {
     if (input->eof())
         return { TokenType::EOF_, "" };
 
-    std::string s;
-    char c;
-    do {
-        input->read(&c, 1);
-    } while (is_whitespace(c));
+    skip_whitespace();
+
+    char c = input->peek();
 
     if (is_letter(c)) {
-        while (is_letter(c)) {
-            s += c;
-            input->read(&c, 1);
-        }
-        input->putback(c);
-
-        if (s == "let")
-            return { TokenType::LET, "let" };
-
-        if (s == "fn")
-            return { TokenType::FUNCTION, "fn" };
-
-        return { TokenType::IDENTIFIER, std::move(s) };
+        return read_word();
     }
 
     if (is_digit(c)) {
-        while (is_digit(c)) {
-            s += c;
-            input->read(&c, 1);
-        }
-        input->putback(c);
-
-        return { TokenType::INT, std::move(s) };
+        return read_number();
     }
 
+    // actually consume char
+    c = input->get();
     switch (c) {
         case '=':
             return { TokenType::ASSIGN, "=" };
