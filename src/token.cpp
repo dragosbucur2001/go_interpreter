@@ -1,5 +1,7 @@
 #include "token.h"
 
-char Token::getChar() {
-    return c;
+bool
+operator==(const Token& rhs, const Token& lhs)
+{
+    return rhs.type == lhs.type && rhs.literal == lhs.literal;
 }
