@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ostream>
 #include <string>
 
 enum class TokenType
@@ -14,6 +15,8 @@ enum class TokenType
     // Operators
     ASSIGN,
     PLUS,
+    EQ,
+    NEQ,
 
     // Delimiters
     COMMA,
@@ -33,5 +36,7 @@ struct Token
     TokenType type;
     std::string literal;
 
+    operator bool() const;
     friend bool operator==(const Token& rhs, const Token& lhs);
+    friend std::ostream& operator<<(std::ostream& os, const Token& lhs);
 };

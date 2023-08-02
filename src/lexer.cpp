@@ -93,8 +93,6 @@ Lexer::next_token()
     // actually consume char
     c = input->get();
     switch (c) {
-        case '=':
-            return { TokenType::ASSIGN, "=" };
         case '+':
             return { TokenType::PLUS, "+" };
         case '(':
@@ -109,6 +107,22 @@ Lexer::next_token()
             return { TokenType::SEMICOLON, ";" };
         case ',':
             return { TokenType::COMMA, "," };
+        case '=': {
+            if (input->peek() == '=') {
+                input.get();
+                return { TokenType::EQ, "==" };
+            } else {
+                return { TokenType::ASSIGN, "=" };
+            }
+        }
+        case '!': {
+            if (input->peek() == '=') {
+                input.get();
+                return { TokenType::NEQ, "!=" };
+            } else {
+                return { TokenType::ILLEGAL, "" };
+            }
+        }
         default:
             return { TokenType::ILLEGAL, "" };
     }
