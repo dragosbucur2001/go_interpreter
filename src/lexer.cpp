@@ -36,11 +36,10 @@ Lexer::read_word()
     }
     input->putback(c);
 
-    if (s == "let")
-        return { TokenType::LET, "let" };
-
-    if (s == "fn")
-        return { TokenType::FUNCTION, "fn" };
+    for (const auto& token : KEYWORD_TOKENS) {
+        if (s == token.literal)
+            return token;
+    }
 
     return { TokenType::IDENTIFIER, std::move(s) };
 }
@@ -75,7 +74,7 @@ Lexer::skip_whitespace()
 Token
 Lexer::next_token()
 {
-    if (input->eof())
+    if (input->eof() || input->bad())
         return { TokenType::EOF_, "" };
 
     skip_whitespace();
@@ -107,6 +106,10 @@ Lexer::next_token()
             return { TokenType::SEMICOLON, ";" };
         case ',':
             return { TokenType::COMMA, "," };
+        case '<':
+            return { TokenType::LT, "<" };
+        case '>':
+            return { TokenType::GT, ">" };
         case '=': {
             if (input->peek() == '=') {
                 input.get();
@@ -120,7 +123,7 @@ Lexer::next_token()
                 input.get();
                 return { TokenType::NEQ, "!=" };
             } else {
-                return { TokenType::ILLEGAL, "" };
+                return { TokenType::BANG, "!" };
             }
         }
         default:
