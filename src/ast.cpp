@@ -36,15 +36,19 @@ Program::read_expression()
         }
         case TokenType::INT:
         case TokenType::IDENTIFIER: {
-            SimpleExpression s{ std::move(curr) };
-            advance_token();
+            if (next.type == TokenType::SEMICOLON) {
+                SimpleExpression s{ std::move(curr) };
+                advance_token();
 
-            return s;
+                return s;
+            }
         }
         default: {
             return { ErrorExpression() };
         }
     }
+
+    return { ErrorExpression() };
 }
 
 ParseSignals
