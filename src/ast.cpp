@@ -75,15 +75,34 @@ AST::read_statement() noexcept
             if (curr.type != TokenType::SEMICOLON)
                 return ParseSignal::ILLEGAL;
 
-            advance_token();
+            advance_token(); // consume SEMICOLON
 
             LetStatement l{ std::move(identifier), std::move(e) };
             statements.emplace_back(std::move(l));
         } break;
+        case TokenType::RETURN: {
+            advance_token();
+            Expression e = read_expression();
+
+            if (std::holds_alternative<ErrorExpression>(e)) 
+                return ParseSignal::ILLEGAL;
+
+            if (curr.type != TokenType::SEMICOLON)
+                return ParseSignal::ILLEGAL;
+
+            advance_token(); // consume SEMICOLON
+
+            ReturnStatement l{ std::move(e) };
+            statements.emplace_back(std::move(l));
+        } break;
+        case TokenType::EOF_: {
+            return ParseSignal::EMPTY;
+        }
         default: {
             return ParseSignal::ILLEGAL;
         }
     }
+
     return ParseSignal::SUCCESS;
 }
 

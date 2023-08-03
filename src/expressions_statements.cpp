@@ -70,7 +70,7 @@ operator==(const LetStatement& lhs, const LetStatement& rhs)
 std::ostream&
 operator<<(std::ostream& os, const ReturnStatement& rhs)
 {
-    os << rhs.expr.index();
+    os << "RETURN: Expression(" << rhs.expr << ")";
     return os;
 }
 
