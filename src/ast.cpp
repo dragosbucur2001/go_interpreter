@@ -27,13 +27,13 @@ AST::read_expression() noexcept
             SimpleExpression s{ TRUE_TOKEN };
             advance_token();
 
-            return s;
+            return { s };
         }
         case TokenType::FALSE: {
             SimpleExpression s{ FALSE_TOKEN };
             advance_token();
 
-            return s;
+            return { s };
         }
         case TokenType::INT:
         case TokenType::IDENTIFIER: {
@@ -41,7 +41,7 @@ AST::read_expression() noexcept
                 SimpleExpression s{ std::move(curr) };
                 advance_token();
 
-                return s;
+                return { s };
             }
         }
             [[fallthrough]];
@@ -69,7 +69,7 @@ AST::read_statement() noexcept
             advance_token();
 
             Expression e = read_expression();
-            if (std::holds_alternative<ErrorExpression>(e))
+            if (std::holds_alternative<ErrorExpression>(e.expr))
                 return ParseSignal::ILLEGAL;
 
             if (curr.type != TokenType::SEMICOLON)
@@ -84,7 +84,7 @@ AST::read_statement() noexcept
             advance_token();
             Expression e = read_expression();
 
-            if (std::holds_alternative<ErrorExpression>(e)) 
+            if (std::holds_alternative<ErrorExpression>(e.expr))
                 return ParseSignal::ILLEGAL;
 
             if (curr.type != TokenType::SEMICOLON)

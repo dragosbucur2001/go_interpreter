@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <ostream>
 #include <string>
 #include <variant>
@@ -9,6 +10,8 @@
 // ===========
 // EXPRESSIONS
 // ===========
+
+struct Expression;
 
 struct SimpleExpression
 {
@@ -29,10 +32,24 @@ struct ErrorExpression
     friend std::ostream& operator<<(std::ostream& os, const ErrorExpression& e);
 };
 
-typedef std::variant<SimpleExpression, ErrorExpression> Expression;
+struct AddExpression
+{
+    std::shared_ptr<Expression> lhs;
+    std::shared_ptr<Expression> rhs;
 
-std::ostream&
-operator<<(std::ostream& os, const Expression& e);
+    friend bool operator==(const AddExpression& lhs, const AddExpression& rhs);
+
+    friend std::ostream& operator<<(std::ostream& os, const AddExpression& e);
+};
+
+struct Expression
+{
+    std::variant<SimpleExpression, ErrorExpression> expr;
+
+    friend bool operator==(const Expression& lhs, const Expression& rhs);
+
+    friend std::ostream& operator<<(std::ostream& os, const Expression& e);
+};
 
 // ==========
 // STATEMENTS

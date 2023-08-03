@@ -35,12 +35,17 @@ operator<<(std::ostream& os, [[maybe_unused]] const ErrorExpression& e)
     return os;
 }
 
-// EXPRESSION VARIANT
+// EXPRESSION
+bool
+operator==(const Expression& lhs, const Expression& rhs)
+{
+    return lhs.expr == rhs.expr;
+}
 
 std::ostream&
 operator<<(std::ostream& os, const Expression& e)
 {
-    std::visit([&os](auto&& arg) { os << arg; }, e);
+    std::visit([&os](auto&& arg) { os << arg; }, e.expr);
     return os;
 }
 
