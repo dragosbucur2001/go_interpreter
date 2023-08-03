@@ -26,5 +26,5 @@ TEST(AST, temp)
     auto iss = std::make_unique<std::istringstream>(s);
     Lexer l(std::move(iss));
 
-    Program p{ std::move(l) };
+    AST ast{ std::move(l) };
 }

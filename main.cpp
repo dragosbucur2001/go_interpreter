@@ -5,7 +5,8 @@
 #include <memory>
 #include <iostream>
 
-#include "./src//lexer.h"
+#include "./src/lexer.h"
+#include "./src/ast.h"
 
 int main() {
     std::string line;
@@ -16,10 +17,11 @@ int main() {
         iss.clear();
         auto stream = std::make_unique<std::istringstream>(std::move(iss));
         Lexer l{std::move(stream)};
-
-        while (auto token = l.next_token()) {
-            std::cout << token << ", ";
-        }
+        
+        AST ast{std::move(l)};
+        ParseSignal s = ast.build();
+        std::cout << (int)s << '\n';
+        ast.print_statements(std::cout);
 
         std::cout << "\n>> ";
     }

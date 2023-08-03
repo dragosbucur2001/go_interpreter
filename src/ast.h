@@ -1,59 +1,49 @@
 #pragma once
 
-#include "./lexer.h"
-#include "./token.h"
+#include <iostream>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <variant>
 #include <vector>
 
-struct SimpleExpression
-{
-    Token token;
-};
+#include "expressions_statements.h"
+#include "lexer.h"
+#include "token.h"
 
-struct ErrorExpression
-{};
-
-typedef std::variant<SimpleExpression, ErrorExpression> Expression;
-
-struct LetStatement
-{
-    std::string identifier;
-    Expression expr;
-};
-
-struct ReturnStatement
-{
-    Expression expr;
-};
-
-typedef std::variant<LetStatement, ReturnStatement> Statements;
-
-enum class ParseSignals
+enum class ParseSignal
 {
     SUCCESS,
     EMPTY,
     ILLEGAL,
 };
 
-class Program
+class AST
 {
-    std::vector<Statements> statements;
+    std::vector<Statement> statements;
     Lexer l;
 
     Token curr;
     Token next;
 
-    void advance_token();
+    void advance_token() noexcept;
 
     // assumes that curr is on the first token of the expression
     // curr will be at the token right after expression
-    Expression read_expression();
+    Expression read_expression() noexcept;
 
     // assumes that curr is on the first token of the line
-    ParseSignals read_statement();
+    ParseSignal read_statement() noexcept;
 
   public:
-    Program(Lexer&& _l);
+    AST(Lexer&& _l) noexcept;
+
+    ParseSignal build() noexcept;
+
+    void print_statements(std::ostream& os)
+    {
+        for (const auto& s : statements) {
+            os << s;
+        }
+    }
 };

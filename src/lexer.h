@@ -3,7 +3,7 @@
 #include <istream>
 #include <memory>
 
-#include "./token.h"
+#include "token.h"
 
 class Lexer
 {

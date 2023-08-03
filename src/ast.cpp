@@ -1,7 +1,8 @@
 #include "ast.h"
+
 #include <variant>
 
-Program::Program(Lexer&& _l)
+AST::AST(Lexer&& _l) noexcept
   : statements{}
   , l(std::move(_l))
   , curr{}
@@ -12,14 +13,14 @@ Program::Program(Lexer&& _l)
 }
 
 void
-Program::advance_token()
+AST::advance_token() noexcept
 {
     curr = next;
     next = l.next_token();
 }
 
 Expression
-Program::read_expression()
+AST::read_expression() noexcept
 {
     switch (curr.type) {
         case TokenType::TRUE: {
@@ -43,6 +44,7 @@ Program::read_expression()
                 return s;
             }
         }
+            [[fallthrough]];
         default: {
             return { ErrorExpression() };
         }
@@ -51,16 +53,16 @@ Program::read_expression()
     return { ErrorExpression() };
 }
 
-ParseSignals
-Program::read_statement()
+ParseSignal
+AST::read_statement() noexcept
 {
     switch (curr.type) {
         case TokenType::LET: {
             advance_token();
 
             if (curr.type != TokenType::IDENTIFIER ||
-                next.type != TokenType::EQ)
-                return ParseSignals::ILLEGAL;
+                next.type != TokenType::ASSIGN)
+                return ParseSignal::ILLEGAL;
 
             std::string identifier{ std::move(curr.literal) };
             advance_token();
@@ -68,11 +70,28 @@ Program::read_statement()
 
             Expression e = read_expression();
             if (std::holds_alternative<ErrorExpression>(e))
-                return ParseSignals::ILLEGAL;
+                return ParseSignal::ILLEGAL;
 
-            LetStatement l{std::move(identifier), std::move(e)};
+            if (curr.type != TokenType::SEMICOLON)
+                return ParseSignal::ILLEGAL;
+
+            advance_token();
+
+            LetStatement l{ std::move(identifier), std::move(e) };
             statements.emplace_back(std::move(l));
         } break;
+        default: {
+            return ParseSignal::ILLEGAL;
+        }
     }
-    return ParseSignals::SUCCESS;
+    return ParseSignal::SUCCESS;
+}
+
+ParseSignal
+AST::build() noexcept
+{
+    ParseSignal s;
+    for (s = read_statement(); s == ParseSignal::SUCCESS; s = read_statement())
+        ;
+    return s;
 }

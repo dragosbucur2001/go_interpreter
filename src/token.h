@@ -51,7 +51,7 @@ struct Token
 };
 
 const Token FUNCTION_TOKEN = { TokenType::FUNCTION, "fn" };
-const Token LET_TOKEN = { TokenType::FUNCTION, "let" };
+const Token LET_TOKEN = { TokenType::LET, "let" };
 const Token TRUE_TOKEN = { TokenType::TRUE, "true" };
 const Token FALSE_TOKEN = { TokenType::FALSE, "false" };
 const Token IF_TOKEN = { TokenType::IF, "if" };

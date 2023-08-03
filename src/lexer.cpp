@@ -1,5 +1,4 @@
-#include "./lexer.h"
-#include <iostream>
+#include "lexer.h"
 
 Lexer::Lexer(std::unique_ptr<std::istream>&& _input)
   : input(std::move(_input))
