@@ -35,7 +35,44 @@ operator<<(std::ostream& os, [[maybe_unused]] const ErrorExpression& e)
     return os;
 }
 
+// BINARY_EXPRESSION
+
+bool
+operator==(const BinaryExpression& lhs, const BinaryExpression& rhs)
+{
+    return lhs.type == rhs.type && *lhs.lhs == *rhs.lhs && *lhs.rhs == *rhs.rhs;
+}
+
+std::ostream&
+operator<<(std::ostream& os, const BinaryExpression& e)
+{
+    switch (e.type) {
+        case TokenType::PLUS: {
+            os << "PLUS: ";
+        } break;
+        case TokenType::LT: {
+            os << "LT: ";
+        } break;
+        case TokenType::GT: {
+            os << "GT: ";
+        } break;
+        case TokenType::EQ: {
+            os << "EQ: ";
+        } break;
+        case TokenType::NEQ: {
+            os << "NEQ: ";
+        } break;
+        default: {
+            os << "INVALID: ";
+        }
+    }
+
+    os << "LHS(" << *e.lhs << "), RHS(" << *e.rhs << ")";
+    return os;
+}
+
 // EXPRESSION
+
 bool
 operator==(const Expression& lhs, const Expression& rhs)
 {

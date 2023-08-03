@@ -32,19 +32,22 @@ struct ErrorExpression
     friend std::ostream& operator<<(std::ostream& os, const ErrorExpression& e);
 };
 
-struct AddExpression
+struct BinaryExpression
 {
+    TokenType type;
     std::shared_ptr<Expression> lhs;
     std::shared_ptr<Expression> rhs;
 
-    friend bool operator==(const AddExpression& lhs, const AddExpression& rhs);
+    friend bool operator==(const BinaryExpression& lhs,
+                           const BinaryExpression& rhs);
 
-    friend std::ostream& operator<<(std::ostream& os, const AddExpression& e);
+    friend std::ostream& operator<<(std::ostream& os,
+                                    const BinaryExpression& e);
 };
 
 struct Expression
 {
-    std::variant<SimpleExpression, ErrorExpression> expr;
+    std::variant<SimpleExpression, ErrorExpression, BinaryExpression> expr;
 
     friend bool operator==(const Expression& lhs, const Expression& rhs);
 

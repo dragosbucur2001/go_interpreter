@@ -1,5 +1,24 @@
 #include "token.h"
 
+#include <iostream>
+
+bool
+Token::is_binary_operator() const
+{
+    switch (type) {
+        case TokenType::PLUS:
+        case TokenType::LT:
+        case TokenType::GT:
+        case TokenType::EQ:
+        case TokenType::NEQ: {
+            return true;
+        }
+        default: {
+            return false;
+        }
+    }
+}
+
 Token::operator bool() const
 {
     return type != TokenType::ILLEGAL && type != TokenType::EOF_;

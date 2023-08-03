@@ -37,7 +37,8 @@ TEST(Lexer, complex_tokens)
                    "let add = fn(x, y) {"
                    "  \t\r\n x + y;"
                    "};"
-                   "let result = add(five, ten);" };
+                   "let result = add(five, ten);"
+                   "==2" };
 
     auto iss = std::make_unique<std::istringstream>(s);
     Lexer l(std::move(iss));
@@ -67,6 +68,7 @@ TEST(Lexer, complex_tokens)
         { TokenType::LPAREN, "(" },     { TokenType::IDENTIFIER, "five" },
         { TokenType::COMMA, "," },      { TokenType::IDENTIFIER, "ten" },
         { TokenType::RPAREN, ")" },     { TokenType::SEMICOLON, ";" },
+        { TokenType::EQ, "==" },        { TokenType::INT, "2" },
     };
 
     for (const auto& t : tokens) {

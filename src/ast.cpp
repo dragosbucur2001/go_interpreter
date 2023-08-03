@@ -1,5 +1,6 @@
 #include "ast.h"
 
+#include <memory>
 #include <variant>
 
 AST::AST(Lexer&& _l) noexcept
@@ -24,24 +25,36 @@ AST::read_expression() noexcept
 {
     switch (curr.type) {
         case TokenType::TRUE: {
-            SimpleExpression s{ TRUE_TOKEN };
+            Expression s{ SimpleExpression{ TRUE_TOKEN } };
             advance_token();
 
-            return { s };
+            return s;
         }
         case TokenType::FALSE: {
-            SimpleExpression s{ FALSE_TOKEN };
+            Expression s{ SimpleExpression{ FALSE_TOKEN } };
             advance_token();
 
-            return { s };
+            return s;
         }
         case TokenType::INT:
         case TokenType::IDENTIFIER: {
-            if (next.type == TokenType::SEMICOLON) {
-                SimpleExpression s{ std::move(curr) };
+            Expression s{ SimpleExpression{ std::move(curr) } };
+            advance_token();
+
+            if (curr.type == TokenType::SEMICOLON) {
+                return s;
+            }
+
+            if (curr.is_binary_operator()) {
+                auto operator_token = curr;
                 advance_token();
 
-                return { s };
+                auto second_operand = read_expression();
+
+                return { BinaryExpression{
+                  operator_token.type,
+                  std::make_shared<Expression>(std::move(s)),
+                  std::make_shared<Expression>(std::move(second_operand)) } };
             }
         }
             [[fallthrough]];

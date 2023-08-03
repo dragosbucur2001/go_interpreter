@@ -111,7 +111,7 @@ Lexer::next_token()
             return { TokenType::GT, ">" };
         case '=': {
             if (input->peek() == '=') {
-                input.get();
+                c = input->get();
                 return { TokenType::EQ, "==" };
             } else {
                 return { TokenType::ASSIGN, "=" };
@@ -119,7 +119,7 @@ Lexer::next_token()
         }
         case '!': {
             if (input->peek() == '=') {
-                input.get();
+                c = input->get();
                 return { TokenType::NEQ, "!=" };
             } else {
                 return { TokenType::BANG, "!" };

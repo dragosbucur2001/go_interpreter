@@ -45,6 +45,8 @@ struct Token
     TokenType type;
     std::string literal;
 
+    bool is_binary_operator() const;
+
     operator bool() const;
     friend bool operator==(const Token& rhs, const Token& lhs);
     friend std::ostream& operator<<(std::ostream& os, const Token& lhs);
